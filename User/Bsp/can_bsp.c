@@ -201,5 +201,5 @@ void HAL_FDCAN_RxFifo1Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo1ITs)
     }
 }
 
-
-
+//TODO:测试电机反馈值及其量程
+//TODO:添加3508力矩控制
