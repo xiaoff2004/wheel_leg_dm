@@ -89,22 +89,18 @@ void dm4310_fbdata(Joint_Motor_t *motor, uint8_t *rx_data,uint32_t data_len)
 	  motor->para.Tcoil = (float)(rx_data[7]);
 	}
 }
-void MotorCanCbk(Can_InfoTypedef *st, uint8_t *rxdata, uint8_t list_id)
-{
-	motor_list[list_id]->data.angle = (uint16_t)(rxdata[0]<<8) + rxdata[1];
-	motor_list[list_id]->data.speed = (int16_t)(rxdata[2]<<8) + rxdata[3];
-	motor_list[list_id]->data.current = (int16_t)(rxdata[4]<<8) + rxdata[5];
-	motor_list[list_id]->data.temp = rxdata[6];
-}
+
 
 void dji3508_fbdata(Wheel_Motor_t *motor, uint8_t *rx_data,uint32_t data_len)
 { 
 	if(data_len==FDCAN_DLC_BYTES_8)
 	{//返回的数据有8个字节
-	  motor->para.pos = (uint16_t)(rxdata[0]<<8) + rxdata[1];
-	  motor->para.vel = (int16_t)(rxdata[2]<<8) + rxdata[3];
-	  motor->para.tor = (int16_t)(rxdata[4]<<8) + rxdata[5];
-	  motor->para.Tmos = (uint8_t )rxdata[6];
+	  motor->para.pos = (uint16_t)(rx_data[0]<<8) + rx_data[1];
+	  motor->para.vel = (int16_t)(rx_data[2]<<8) + rx_data[3];
+	  motor->para.tor = (int16_t)(rx_data[4]<<8) + rx_data[5];
+	  motor->para.Tmos = (uint8_t )rx_data[6];
+
+      //268/17
 	}
 }
 
