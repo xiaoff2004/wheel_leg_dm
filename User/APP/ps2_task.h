@@ -78,5 +78,7 @@ extern void pstwo_task(void);
 
 #endif
 
-
-
+// start_flag = 1;使能标志
+//recover_flag =1;恢复标志(恢复腿长，自启)
+//prejump_flag = 1;预跳标志
+//jump_flag = 1;jump_flag2 = 1;跳跃标志(左右腿)
