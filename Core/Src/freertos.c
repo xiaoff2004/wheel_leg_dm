@@ -29,7 +29,7 @@
 #include "chassisR_task.h"
 #include "chassisL_task.h"
 #include "observe_task.h"
-#include "ps2_task.h"
+#include "dt7_task.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -233,7 +233,7 @@ void PS2_Task(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    pstwo_task();
+    dt7_task();
   }
   /* USER CODE END PS2_Task */
 }
