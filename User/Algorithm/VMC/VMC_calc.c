@@ -2,11 +2,11 @@
 
 void VMC_init(vmc_leg_t *vmc)//给杆长赋值
 {
-	vmc->l5=0.088f;//AE长度 //单位为m
-	vmc->l1=0.0833f;//单位为m
-	vmc->l2=0.16f;//单位为m
-	vmc->l3=0.16f;//单位为m
-	vmc->l4=0.0833f;//单位为m
+	vmc->l5=0.11f;//AE长度 //单位为m
+	vmc->l1=0.23f;//单位为m
+	vmc->l2=0.34f;//单位为m
+	vmc->l3=0.34f;//单位为m
+	vmc->l4=0.2f;//单位为m
 }
 
 void VMC_calc_1_right(vmc_leg_t *vmc,INS_t *ins,float dt)//计算theta和d_theta给lqr用，同时也计算腿长L0
