@@ -57,7 +57,9 @@ void ChassisL_task(void)
 
         chassisL_control_loop(&chassis_move, &left, &INS, LQR_K_L, &LegL_Pid);//控制计算
 
-        if(chassis_move . start_flag == 1)
+        enable_motor_mode(&hfdcan2, chassis_move . joint_motor[3] . para . id, chassis_move . joint_motor[3] . mode);
+        osDelay(CHASSL_TIME);
+        /*if(chassis_move . start_flag == 1)
         {
             mit_ctrl(&hfdcan2, 0x08, 0.0f, 0.0f, 0.0f, 0.0f, left . torque_set[1]);//left.torque_set[1]
             osDelay(CHASSL_TIME);
@@ -74,7 +76,7 @@ void ChassisL_task(void)
             osDelay(CHASSL_TIME);
             mit_ctrl2(&hfdcan2, 0x01, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);//左边轮毂电机
             osDelay(CHASSL_TIME);
-        }
+        }*/
     }
 }
 

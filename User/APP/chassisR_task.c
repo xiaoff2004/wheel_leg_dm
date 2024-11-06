@@ -74,25 +74,27 @@ void ChassisR_task(void)
 		chassisR_feedback_update(&chassis_move,&right,&INS);//更新数据
 		
 	  chassisR_control_loop(&chassis_move,&right,&INS,LQR_K_R,&LegR_Pid);//控制计算
-   
-		if(chassis_move.start_flag==1)	
-		{
-			mit_ctrl(&hfdcan1,0x08, 0.0f, 0.0f,0.0f, 0.0f,right.torque_set[1]);//right.torque_set[1]
-			osDelay(CHASSR_TIME);
-			mit_ctrl(&hfdcan1,0x06, 0.0f, 0.0f,0.0f, 0.0f,right.torque_set[0]);//right.torque_set[0]
-			osDelay(CHASSR_TIME);
-			mit_ctrl2(&hfdcan1,0x01, 0.0f, 0.0f,0.0f, 0.0f,chassis_move.wheel_motor[0].wheel_T);//右边轮毂电机
-			osDelay(CHASSR_TIME);
-		}
-		else if(chassis_move.start_flag==0)	
-		{
-			mit_ctrl(&hfdcan1,0x08, 0.0f, 0.0f,0.0f, 0.0f,0.0f);//right.torque_set[1]
-			osDelay(CHASSR_TIME);
-			mit_ctrl(&hfdcan1,0x06, 0.0f, 0.0f,0.0f, 0.0f,0.0f);//right.torque_set[0]
-			osDelay(CHASSR_TIME);
-			mit_ctrl2(&hfdcan1,0x01, 0.0f, 0.0f,0.0f, 0.0f,0.0f);//右边轮毂电机	
-			osDelay(CHASSR_TIME);
-		}
+
+        enable_motor_mode(&hfdcan1,chassis_move.joint_motor[1].para.id,chassis_move.joint_motor[1].mode);
+        osDelay(CHASSR_TIME);
+//		if(chassis_move.start_flag==1)
+//		{
+//			mit_ctrl(&hfdcan1,0x08, 0.0f, 0.0f,0.0f, 0.0f,right.torque_set[1]);//right.torque_set[1]
+//			osDelay(CHASSR_TIME);
+//			mit_ctrl(&hfdcan1,0x06, 0.0f, 0.0f,0.0f, 0.0f,right.torque_set[0]);//right.torque_set[0]
+//			osDelay(CHASSR_TIME);
+//			mit_ctrl2(&hfdcan1,0x01, 0.0f, 0.0f,0.0f, 0.0f,chassis_move.wheel_motor[0].wheel_T);//右边轮毂电机
+//			osDelay(CHASSR_TIME);
+//		}
+//		else if(chassis_move.start_flag==0)
+//		{
+//			mit_ctrl(&hfdcan1,0x08, 0.0f, 0.0f,0.0f, 0.0f,0.0f);//right.torque_set[1]
+//			osDelay(CHASSR_TIME);
+//			mit_ctrl(&hfdcan1,0x06, 0.0f, 0.0f,0.0f, 0.0f,0.0f);//right.torque_set[0]
+//			osDelay(CHASSR_TIME);
+//			mit_ctrl2(&hfdcan1,0x01, 0.0f, 0.0f,0.0f, 0.0f,0.0f);//右边轮毂电机
+//			osDelay(CHASSR_TIME);
+//		}
 	
 	}
 }

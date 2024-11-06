@@ -140,6 +140,37 @@ uint8_t canx_send_data(FDCAN_HandleTypeDef *hcan, uint16_t id, uint8_t *data, ui
 }
 
 
+/**
+************************************************************************
+* @brief:      	fdcanx_send_data(FDCAN_HandleTypeDef *hfdcan, uint16_t id, uint8_t *data, uint32_t len)
+* @param:       hfdcan：FDCAN句柄
+* @param:       id：CAN设备ID
+* @param:       data：发送的数据
+* @param:       len：发送的数据长度
+* @retval:     	void
+* @details:    	发送数据
+************************************************************************
+**/
+uint8_t fdcanx_send_data(FDCAN_HandleTypeDef *hfdcan, uint16_t id, uint8_t *data, uint32_t len)
+{
+	FDCAN_TxHeaderTypeDef TxHeader;
+
+  TxHeader.Identifier = id;
+  TxHeader.IdType = FDCAN_STANDARD_ID;																// 标准ID
+  TxHeader.TxFrameType = FDCAN_DATA_FRAME;														// 数据帧
+  TxHeader.DataLength = 8;																		// 发送数据长度
+  TxHeader.ErrorStateIndicator = FDCAN_ESI_ACTIVE;										// 设置错误状态指示
+  TxHeader.BitRateSwitch = FDCAN_BRS_OFF;															// 不开启可变波特率
+  TxHeader.FDFormat = FDCAN_CLASSIC_CAN;															// 普通CAN格式
+  TxHeader.TxEventFifoControl = FDCAN_NO_TX_EVENTS;										// 用于发送事件FIFO控制, 不存储
+  TxHeader.MessageMarker = 0x00; 			// 用于复制到TX EVENT FIFO的消息Maker来识别消息状态，范围0到0xFF
+
+  if(HAL_FDCAN_AddMessageToTxFifoQ(hfdcan, &TxHeader, data)!=HAL_OK)
+		return 1;//发送
+	return 0;
+}
+
+
 extern chassis_t chassis_move;
 
 void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)

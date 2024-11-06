@@ -134,8 +134,9 @@ void enable_motor_mode(hcan_t* hcan, uint16_t motor_id, uint16_t mode_id)
 	data[5] = 0xFF;
 	data[6] = 0xFF;
 	data[7] = 0xFC;
-	
-	canx_send_data(hcan, id, data, 8);
+
+    fdcanx_send_data(hcan, id, data, 8);
+//	canx_send_data(hcan, id, data, 8);
 }
 
 void save_motor_zero(hcan_t* hcan, uint16_t motor_id, uint16_t mode_id)
