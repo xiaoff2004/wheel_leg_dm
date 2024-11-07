@@ -40,41 +40,40 @@ extern vmc_leg_t right;
 extern vmc_leg_t left;
 void dt7_data_process(RC_Ctl_t *RC_Ctl, chassis_t *chassis, float dt)
 {
-    if (RC_Ctl->rc.sw1 != RC_SW_UP)
+    if (RC_Ctl->rc.sw1 != RC_SW_DOWN)
         chassis->start_flag = 1;
     else
     {
         chassis->start_flag = 0;
         chassis->recover_flag = 0;
     }
-    if (chassis->recover_flag == 0 
-    && ((chassis->myPithR < ((-3.1415926f) / 4.0f) 
-    && chassis->myPithR > ((-3.1415926f) / 2.0f)) || (chassis->myPithR > (3.1415926f / 4.0f) 
-    && chassis->myPithR < (3.1415926f / 2.0f))))
-    {
-        chassis->recover_flag = 1; // 需要自起
-        chassis->leg_set = LEGLEN_MIN;  // 原始腿长
-    }
-    if(RC_Ctl->rc.sw1 == RC_SW_MID  && chassis->prejump_flag == 0 && chassis->start_flag == 1)
-    {
-        chassis->prejump_flag = 1; // 预跳跃标志置1
-    }
-    else if (RC_Ctl->rc.sw1 != RC_SW_MID  && chassis->prejump_flag == 1)
-    {
-        // 手柄上的select按键再按一次置0
-        chassis->prejump_flag = 0;
-    }
-
-    if (flag ==0  && RC_Ctl->rc.wheel>100 && chassis->prejump_flag == 1 && chassis->jump_flag == 0 && chassis->jump_flag2 == 0)
-    {
-        // 手柄上的左边的上下左右键的上按键被按下，开启跳跃
-        // 只有当预跳跃标志置1，按下这个键才能开启跳跃
-        chassis->jump_flag = 1;
-        chassis->jump_flag2 = 1;
-        flag = 1;
-    }
-
-    last_flag = flag;
+//    if (chassis->recover_flag == 0
+//    && ((chassis->myPithR < ((-3.1415926f) / 4.0f)
+//    && chassis->myPithR > ((-3.1415926f) / 2.0f)) || (chassis->myPithR > (3.1415926f / 4.0f)
+//    && chassis->myPithR < (3.1415926f / 2.0f))))
+//    {
+//        chassis->recover_flag = 1; // 需要自起
+//        chassis->leg_set = LEGLEN_MIN;  // 原始腿长
+//    }
+//    if(RC_Ctl->rc.sw1 == RC_SW_UP  && chassis->prejump_flag == 0 && chassis->start_flag == 1)
+//    {
+//        chassis->prejump_flag = 1; // 预跳跃标志置1
+//    }
+//    else if (RC_Ctl->rc.sw1 != RC_SW_UP  && chassis->prejump_flag == 1)
+//    {
+//        chassis->prejump_flag = 0;
+//    }
+//
+//    if (flag ==0  && RC_Ctl->rc.wheel>500 && chassis->prejump_flag == 1 && chassis->jump_flag == 0 && chassis->jump_flag2 == 0)
+//    {
+//        // 手柄上的左边的上下左右键的上按键被按下，开启跳跃
+//        // 只有当预跳跃标志置1，按下这个键才能开启跳跃
+//        chassis->jump_flag = 1;
+//        chassis->jump_flag2 = 1;
+//        flag = 1;
+//    }
+//
+//    last_flag = flag;
 
     if (chassis->start_flag == 1)
     {                                                           // 启动
@@ -102,8 +101,8 @@ void dt7_data_process(RC_Ctl_t *RC_Ctl, chassis_t *chassis, float dt)
         chassis->v_set = 0.0f;                  // 清零
         chassis->x_set = chassis->x_filter;     // 保存
         chassis->turn_set = chassis->total_yaw; // 保存
-        chassis->leg_set = 0.08f;               // 原始腿长
-        chassis->roll_set = -0.03f;
+        chassis->leg_set = LEGLEN_MIN;               // 原始腿长
+        chassis->roll_set = 0.0f;
     }
 }
 

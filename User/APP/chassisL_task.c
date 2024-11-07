@@ -23,6 +23,7 @@
 #include "INS_task.h"
 #include "cmsis_os.h"
 #include "pid.h"
+#include "config.h"
 
 vmc_leg_t left;
 
@@ -57,15 +58,15 @@ void ChassisL_task(void)
 
         chassisL_control_loop(&chassis_move, &left, &INS, LQR_K_L, &LegL_Pid);//控制计算
 
-        enable_motor_mode(&hfdcan2, chassis_move . joint_motor[3] . para . id, chassis_move . joint_motor[3] . mode);
-        osDelay(CHASSL_TIME);
-        /*if(chassis_move . start_flag == 1)
+
+        if(chassis_move . start_flag == 1)
         {
             mit_ctrl(&hfdcan2, 0x08, 0.0f, 0.0f, 0.0f, 0.0f, left . torque_set[1]);//left.torque_set[1]
             osDelay(CHASSL_TIME);
             mit_ctrl(&hfdcan2, 0x06, 0.0f, 0.0f, 0.0f, 0.0f, left . torque_set[0]);
             osDelay(CHASSL_TIME);
-            mit_ctrl2(&hfdcan2, 0x01, 0.0f, 0.0f, 0.0f, 0.0f, chassis_move . wheel_motor[1] . wheel_T);//左边边轮毂电机
+//            mit_ctrl2(&hfdcan2, 0x01, 0.0f, 0.0f, 0.0f, 0.0f, chassis_move . wheel_motor[1] . wheel_T);//左边边轮毂电机
+            dji3508_ctrl(&hfdcan2, 0x200, chassis_move . wheel_motor[1] . wheel_T /REDUCTION_RATIO /DJI3508_TOQUE_CONSTANT);
             osDelay(CHASSL_TIME);
         }
         else if(chassis_move . start_flag == 0)
@@ -74,9 +75,10 @@ void ChassisL_task(void)
             osDelay(CHASSL_TIME);
             mit_ctrl(&hfdcan2, 0x06, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
             osDelay(CHASSL_TIME);
-            mit_ctrl2(&hfdcan2, 0x01, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);//左边轮毂电机
+//            mit_ctrl2(&hfdcan2, 0x01, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);//左边轮毂电机
+            dji3508_ctrl(&hfdcan2, 0x200, 0);
             osDelay(CHASSL_TIME);
-        }*/
+        }
     }
 }
 
