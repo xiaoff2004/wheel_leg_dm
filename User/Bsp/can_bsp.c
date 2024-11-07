@@ -223,7 +223,7 @@ void HAL_FDCAN_RxFifo1Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo1ITs)
 //                case 0 :
 //                    dm6215_fbdata(&chassis_move . wheel_motor[1], g_Can2RxData, RxHeader2 . DataLength);
 //                    break;
-                case 0x202:
+                case 0x201:
                     dji3508_fbdata(&chassis_move . wheel_motor[1], g_Can1RxData, RxHeader1 . DataLength);
                     break;
                 default: break;
