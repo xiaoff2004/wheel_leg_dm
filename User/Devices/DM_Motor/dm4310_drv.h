@@ -27,8 +27,8 @@
 #define KP_MAX2 500.0f
 #define KD_MIN2 0.0f
 #define KD_MAX2 5.0f
-#define T_MIN2 -10.0f
-#define T_MAX2 10.0f
+#define T_MIN2 -5.0f
+#define T_MAX2 5.0f
 
 typedef struct 
 {
@@ -78,6 +78,8 @@ extern void speed_ctrl(hcan_t* hcan,uint16_t motor_id, float _vel);
 
 //轮毂电机MIT模式发送命令
 extern void mit_ctrl2(hcan_t* hcan, uint16_t motor_id, float pos, float vel,float kp, float kd, float torq);
+//大疆3508电机发送命令
+extern void dji3508_ctrl(hcan_t* hcan, uint16_t motor_id,float torq);
 
 extern void joint_motor_init(Joint_Motor_t *motor,uint16_t id,uint16_t mode);
 extern void wheel_motor_init(Wheel_Motor_t *motor,uint16_t id,uint16_t mode);
