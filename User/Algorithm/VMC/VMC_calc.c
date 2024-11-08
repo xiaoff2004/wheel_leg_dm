@@ -3,10 +3,10 @@
 void VMC_init(vmc_leg_t *vmc)//给杆长赋值
 {
     vmc -> l5 = 0.11f;//AE长度 //单位为m
-    vmc -> l1 = 0.23f;//单位为m
+    vmc -> l1 = 0.2f;//单位为m
     vmc -> l2 = 0.34f;//单位为m
     vmc -> l3 = 0.34f;//单位为m
-    vmc -> l4 = 0.23f;//单位为m
+    vmc -> l4 = 0.2f;//单位为m
 }
 
 void VMC_calc_1_right(vmc_leg_t *vmc, INS_t *ins, float dt)//计算theta和d_theta给lqr用，同时也计算腿长L0
@@ -180,7 +180,7 @@ uint8_t ground_detectionL(vmc_leg_t *vmc, INS_t *ins)
 
     aver_fnl = 0.25f * averl[0] + 0.25f * averl[1] + 0.25f * averl[2] + 0.25f * averl[3];//对支持力进行均值滤波
 
-    if (aver_fnl < 3.0f) {//离地了
+    if (aver_fnl < 10.0f) {//离地了
         return 1;
     } else {
         return 0;
@@ -192,5 +192,4 @@ float LQR_K_calc(float *coe, float len)
 
     return coe[0] * len * len * len + coe[1] * len * len + coe[2] * len + coe[3];
 }
-
 

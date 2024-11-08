@@ -61,9 +61,9 @@ void Observe_task(void)
 
     while (1) {
         wr = -chassis_move . wheel_motor[0] . para . vel * REDUCTION_RATIO - INS . Gyro[1] +
-             right . d_alpha;//右边驱动轮转子相对大地角速度，这里定义的是顺时针为正,(268.0f / 17.0f)为减速比
+             right . d_alpha;//右边驱动轮转子相对大地角速度，这里定义的是顺时针为正,REDUCTION_RATIO为减速比
         vrb = wr * WHEEL_RADIUS + right . L0 * right . d_theta * arm_cos_f32(right . theta) +
-              right . d_L0 * arm_sin_f32(right . theta);//机体b系的速度，0.129f为轮子半径
+              right . d_L0 * arm_sin_f32(right . theta);//机体b系的速度，WHEEL_RADIUS为轮子半径
 
         wl = -chassis_move . wheel_motor[1] . para . vel * REDUCTION_RATIO + INS . Gyro[1] +
              left . d_alpha;//左边驱动轮转子相对大地角速度，这里定义的是顺时针为正

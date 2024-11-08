@@ -25,6 +25,9 @@
 #define TURN_PID_MAX_OUT  1.0f//ÂÖì±µç»úµÄ¶î¶¨Å¤¾Ø
 #define TURN_PID_MAX_IOUT 0.0f
 
+extern float DM4310_TOQUE_MAX ;
+
+
 typedef struct
 {
     Joint_Motor_t joint_motor[4];
@@ -52,12 +55,12 @@ typedef struct
     float myPithGyroL;
     float roll;
     float total_yaw;
-    float theta_err;//Á½ÍÈ¼Ğ½ÇÎó²î
+    float split_theta_err;//Á½ÍÈ¼Ğ½ÇÎó²î
 
     float turn_T;//yawÖá²¹³¥
     float roll_f0;//rollÖá²¹³¥
 
-    float leg_tp;//·ÀÅü²æ²¹³¥
+    float anti_split_tp;//·ÀÅü²æ²¹³¥
 
     uint8_t start_flag;//Æô¶¯±êÖ¾
 

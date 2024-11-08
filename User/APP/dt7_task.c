@@ -75,34 +75,34 @@ void dt7_data_process(RC_Ctl_t *RC_Ctl, chassis_t *chassis, float dt)
 //
 //    last_flag = flag;
 
-    if (chassis->start_flag == 1)
-    {                                                           // 启动
-        chassis->v_set = ((float)(RC_Ctl->rc.ch2)) * SENSE_VX; // 往前大于0
-        chassis->x_set = chassis->x_set + chassis->v_set * dt;
-
-        chassis->turn_set = chassis->turn_set + (RC_Ctl->rc.ch1) * SENSE_YAW; // 往右大于0
-
-        chassis->roll_set = chassis->roll_set + ((float)(RC_Ctl->rc.ch3)) * SENSE_ROLL;
-
-        mySaturate(&chassis->roll_set, -ROLL_MAX_ABS, ROLL_MAX_ABS);
-
-        chassis->leg_set = chassis->leg_set + ((float)(RC_Ctl->rc.ch4)) * SENSE_LEGLEN;
-        mySaturate(&chassis->leg_set, LEGLEN_MIN, LEGLEN_MAX);
-
-        if (fabsf(chassis->last_leg_set - chassis->leg_set) > 0.0001f)
-        {                       // 遥控器控制腿长在变化
-            right.leg_flag = 1; // 为1标志着遥控器在控制腿长伸缩，根据这个标志可以不进行离地检测，因为当腿长在主动伸缩时，离地检测会误判为离地了
-            left.leg_flag = 1;
-        }
-        chassis->last_leg_set = chassis->leg_set;
-    }
-    else if (chassis->start_flag == 0)
-    {                                           // 关闭
-        chassis->v_set = 0.0f;                  // 清零
-        chassis->x_set = chassis->x_filter;     // 保存
-        chassis->turn_set = chassis->total_yaw; // 保存
-        chassis->leg_set = LEGLEN_MIN;               // 原始腿长
-        chassis->roll_set = 0.0f;
-    }
+//    if (chassis->start_flag == 1)
+//    {                                                           // 启动
+//        chassis->v_set = ((float)(RC_Ctl->rc.ch2)) * SENSE_VX; // 往前大于0
+//        chassis->x_set = chassis->x_set + chassis->v_set * dt;
+//
+//        chassis->turn_set = chassis->turn_set + (RC_Ctl->rc.ch1) * SENSE_YAW; // 往右大于0
+//
+//        chassis->roll_set = chassis->roll_set + ((float)(RC_Ctl->rc.ch3)) * SENSE_ROLL;
+//
+//        mySaturate(&chassis->roll_set, -ROLL_MAX_ABS, ROLL_MAX_ABS);
+//
+//        chassis->leg_set = chassis->leg_set + ((float)(RC_Ctl->rc.ch4)) * SENSE_LEGLEN;
+//        mySaturate(&chassis->leg_set, LEGLEN_MIN, LEGLEN_MAX);
+//
+//        if (fabsf(chassis->last_leg_set - chassis->leg_set) > 0.0001f)
+//        {                       // 遥控器控制腿长在变化
+//            right.leg_flag = 1; // 为1标志着遥控器在控制腿长伸缩，根据这个标志可以不进行离地检测，因为当腿长在主动伸缩时，离地检测会误判为离地了
+//            left.leg_flag = 1;
+//        }
+//        chassis->last_leg_set = chassis->leg_set;
+//    }
+//    else if (chassis->start_flag == 0)
+//    {                                           // 关闭
+//        chassis->v_set = 0.0f;                  // 清零
+//        chassis->x_set = chassis->x_filter;     // 保存
+//        chassis->turn_set = chassis->total_yaw; // 保存
+//        chassis->leg_set = LEGLEN_MIN;               // 原始腿长
+//        chassis->roll_set = 0.0f;
+//    }
 }
 
