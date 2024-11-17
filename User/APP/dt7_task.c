@@ -29,6 +29,7 @@ uint8_t flag = 0;
 void dt7_task(void)
 {
     RemoteInit();
+    chassis_move.leg_set = LEGLEN_MIN;
     while (1)
     {                                           // 读数据
         dt7_data_process(&RC_Ctl, &chassis_move, (float)DT7_TIME / 1000.0f); // 处理数据，设置期望数据
@@ -41,7 +42,12 @@ extern vmc_leg_t left;
 void dt7_data_process(RC_Ctl_t *RC_Ctl, chassis_t *chassis, float dt)
 {
     if (RC_Ctl->rc.sw1 != RC_SW_DOWN)
+    {
         chassis->start_flag = 1;
+        chassis->recover_flag = 0;
+
+    }
+
     else
     {
         chassis->start_flag = 0;

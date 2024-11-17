@@ -311,21 +311,27 @@ void mit_ctrl2(hcan_t *hcan, uint16_t motor_id, float pos, float vel, float kp, 
     fdcanx_send_data(hcan, id, data, 8);
 }
 
-//Ä¬ÈÏ0x201
-void dji3508_ctrl(hcan_t *hcan, uint16_t motor_id, float torq)
-{
-    uint8_t data[8];
-    uint16_t id = motor_id;
-    uint16_t torq_tmp;
-    torq_tmp = float_to_uint(torq, T_MIN2, T_MIN2, 16);
 
-    data[0] = (torq_tmp >> 8);
-    data[1] = torq;
-    data[2] = 0;
-    data[3] = 0;
-    data[4] = 0;
-    data[5] = 0;
-    data[6] = 0;
-    data[7] = 0;
-    fdcanx_send_data(hcan, id, data, 8);
+void dji3508_ctrl(hcan_t *hcan, float torq1, float torq2)
+{
+    uint8_t data[8] ={0};
+    float i =0;
+		if(torq1!=0.0f)
+		{
+			i = torq1 /(0.3f * 0.821f) + 0.78f;//1/(0.3f *0.821f)
+			i = i *16384.0f/20.0f;
+		}
+		data[0] = ((int16_t)i >> 8);
+		data[1] = i;
+		i =0;
+		if(torq2!=0.0f)
+		{
+			i = torq2 /(0.3f * 0.821f) + 0.78f;//1/(0.3f *0.821f)
+			i = i *16384.0f/20.0f;
+		}
+    
+		data[2] = ((int16_t)i >> 8);
+		data[3] = i;
+
+    fdcanx_send_data(hcan, 0x200, data, 8);
 }

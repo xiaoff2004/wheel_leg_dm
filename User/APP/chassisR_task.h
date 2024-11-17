@@ -16,7 +16,7 @@
 #define TP_PID_KP 30.0f
 #define TP_PID_KI 0.0f
 #define TP_PID_KD 1.0f
-#define TP_PID_MAX_OUT  2.0f
+#define TP_PID_MAX_OUT  3.0f
 #define TP_PID_MAX_IOUT 0.0f
 
 #define TURN_PID_KP 2.5f
@@ -25,7 +25,6 @@
 #define TURN_PID_MAX_OUT  1.0f//轮毂电机的额定扭矩
 #define TURN_PID_MAX_IOUT 0.0f
 
-extern float DM4310_TOQUE_MAX ;
 
 
 typedef struct

@@ -122,7 +122,9 @@ int main(void)
 	Power_OUT2_ON;
 	
   FDCAN1_Config();//can¹ýÂËÆ÷³õÊ¼»¯
-	FDCAN2_Config();
+    FDCAN2_Config();
+    FDCAN3_Config();
+
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in cmsis_os2.c) */
