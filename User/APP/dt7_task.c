@@ -18,10 +18,11 @@
 #include "cmsis_os.h"
 #include "remote.h"
 #include "config.h"
+#include "vofa.h"
 
 
-extern chassis_t chassis_move;
-extern INS_t INS;
+
+
 uint32_t DT7_TIME = 10; // ps2手柄任务周期是10ms
 
 uint8_t last_flag = 0;
@@ -29,13 +30,25 @@ uint8_t flag = 0;
 void dt7_task(void)
 {
     RemoteInit();
-    chassis_move.leg_set = LEGLEN_MIN;
+
     while (1)
     {                                           // 读数据
         dt7_data_process(&RC_Ctl, &chassis_move, (float)DT7_TIME / 1000.0f); // 处理数据，设置期望数据
+        vofa_demo(
+                left.L0,
+                  right.L0,
+                  0,
+                  left.F0,
+                  right.F0,
+                   0,
+                  0,
+                  0);
         osDelay(DT7_TIME);
     }
 }
+
+
+
 
 extern vmc_leg_t right;
 extern vmc_leg_t left;

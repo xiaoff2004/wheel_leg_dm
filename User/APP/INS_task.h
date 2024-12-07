@@ -72,6 +72,8 @@ typedef struct
     float Roll;
 } IMU_Param_t;
 
+extern INS_t INS;
+
 extern void INS_Init(void);
 extern void INS_task(void);
 

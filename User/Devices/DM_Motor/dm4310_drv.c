@@ -307,7 +307,6 @@ void mit_ctrl2(hcan_t *hcan, uint16_t motor_id, float pos, float vel, float kp, 
     data[6] = ((kd_tmp & 0xF) << 4) | (tor_tmp >> 8);
     data[7] = tor_tmp;
 
-//	canx_send_data(hcan, id, data, 8);
     fdcanx_send_data(hcan, id, data, 8);
 }
 
@@ -315,23 +314,23 @@ void mit_ctrl2(hcan_t *hcan, uint16_t motor_id, float pos, float vel, float kp, 
 void dji3508_ctrl(hcan_t *hcan, float torq1, float torq2)
 {
     uint8_t data[8] ={0};
-    float i =0;
-		if(torq1!=0.0f)
-		{
-			i = torq1 /(0.3f * 0.821f) + 0.78f;//1/(0.3f *0.821f)
-			i = i *16384.0f/20.0f;
-		}
-		data[0] = ((int16_t)i >> 8);
-		data[1] = i;
-		i =0;
-		if(torq2!=0.0f)
-		{
-			i = torq2 /(0.3f * 0.821f) + 0.78f;//1/(0.3f *0.821f)
-			i = i *16384.0f/20.0f;
-		}
-    
-		data[2] = ((int16_t)i >> 8);
-		data[3] = i;
+    int16_t i =0;
+    if(torq1 !=0.0f)
+    {
+       i = (torq1  + 0.26f * (torq1 > 0 ? 1.0f :-1.0f))/0.269f;
+       i = i *16384.0f/20.0f;
+    }
+    data[0] = ((int16_t)i >> 8);
+    data[1] = i;
+    i =0;
+
+    if(torq2 != 0.0f )
+    {
+        i = (torq2  + 0.269f * (torq2 > 0 ? 1.0f :-1.0f)) /0.269f;
+        i = i *16384.0f/20.0f;
+    }
+    data[2] = ((int16_t)i >> 8);
+    data[3] = i;
 
     fdcanx_send_data(hcan, 0x200, data, 8);
 }

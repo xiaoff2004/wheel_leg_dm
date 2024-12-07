@@ -106,10 +106,10 @@ int main(void)
   MX_DMA_Init();
   MX_SPI2_Init();
   MX_FDCAN1_Init();
-  MX_FDCAN2_Init();
   MX_TIM3_Init();
   MX_FDCAN3_Init();
   MX_UART5_Init();
+  MX_UART7_Init();
   /* USER CODE BEGIN 2 */
 	DWT_Init(480);
   
@@ -121,8 +121,7 @@ int main(void)
 	Power_OUT1_ON;//imu初始化完成，可控电源打开，led灯亮
 	Power_OUT2_ON;
 	
-  FDCAN1_Config();//can过滤器初始化
-    FDCAN2_Config();
+    FDCAN1_Config();//can过滤器初始化
     FDCAN3_Config();
 
   /* USER CODE END 2 */

@@ -65,7 +65,7 @@ void RemoteSolve()
     	RC_Ctl.rc.ch4 = 0;
     	RC_Ctl.rc.sw1 = RC_SW_DOWN;
     	RC_Ctl.rc.sw2 = RC_SW_DOWN;
-			RemoteInit();
+		RemoteInit();
 	    return ;
 	}
 }

@@ -5,11 +5,6 @@
 #include "INS_task.h"
 
 #define pi 3.1415926f
-#define LEG_PID_KP  350.0f
-#define LEG_PID_KI  0.0f//不积分
-#define LEG_PID_KD  3000.0f
-#define LEG_PID_MAX_OUT  90.0f //90牛
-#define LEG_PID_MAX_IOUT 0.0f
 
 typedef struct {
     /*左右两腿的公共参数，固定不变*/

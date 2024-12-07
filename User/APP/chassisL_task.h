@@ -6,7 +6,7 @@
 #include "chassisR_task.h"
 
 
-
+extern vmc_leg_t left;
 
 extern void ChassisL_task(void);
 

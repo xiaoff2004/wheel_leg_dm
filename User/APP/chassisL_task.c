@@ -28,21 +28,17 @@
 
 vmc_leg_t left;
 
-float LQR_K_L[12] = {
-        -8.0671f, -1.0763f, -0.4979f, -1.0558f, 0.1998f, 0.0335f,
-        1.7577f, 0.2924f, 0.1998f, 0.4072f, 9.9599f, 0.8545f
-};
-
+float LQR_K_L[12] =
+{-6.2267f, -0.5523f, -0.0196f, -0.1568f, 1.5238f, 0.2556f, 2.6314f, -0.1499f, -0.0066f, -0.0540f, 6.2181f, 0.4812f}
+;
 extern float Poly_Coefficient[12][4];
 
-extern chassis_t chassis_move;
 
 float jump_time2;
 extern float jump_time;
 
 PidTypeDef LegL_Pid;
 
-extern INS_t INS;
 uint32_t CHASSL_TIME = 1;
 
 void ChassisL_task(void)
@@ -59,17 +55,17 @@ void ChassisL_task(void)
 
 
         if (chassis_move . start_flag == 1) {
-            mit_ctrl(&hfdcan2, 0x08, 0.0f, 0.0f, 0.0f, 0.0f, left . torque_set[1]);//left.torque_set[1]
+            mit_ctrl(&hfdcan1, 0x05, 0.0f, 0.0f, 0.0f, 0.0f, left . torque_set[1]);//left.torque_set[1]
             osDelay(CHASSL_TIME);
-            mit_ctrl(&hfdcan2, 0x06, 0.0f, 0.0f, 0.0f, 0.0f, left . torque_set[0]);
+            mit_ctrl(&hfdcan1, 0x07, 0.0f, 0.0f, 0.0f, 0.0f, left . torque_set[0]);
             osDelay(CHASSL_TIME);
-            mit_ctrl2(&hfdcan2, 0x01, 0.0f, 0.0f, 0.0f, 0.0f, chassis_move . wheel_motor[1] . wheel_T);//左边边轮毂电机
+
 
             osDelay(CHASSL_TIME);
         } else if (chassis_move . start_flag == 0) {
-            mit_ctrl(&hfdcan2, 0x08, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);//left.torque_set[1]
+            mit_ctrl(&hfdcan1, 0x07, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);//left.torque_set[1]
             osDelay(CHASSL_TIME);
-            mit_ctrl(&hfdcan2, 0x06, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+            mit_ctrl(&hfdcan1, 0x05, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
             osDelay(CHASSL_TIME);
         }
     }
@@ -78,20 +74,20 @@ void ChassisL_task(void)
 void ChassisL_init(chassis_t *chassis, vmc_leg_t *vmc, PidTypeDef *legl)
 {
     const static float legl_pid[3] = {LEG_PID_KP, LEG_PID_KI, LEG_PID_KD};
-
-    joint_motor_init(&chassis -> joint_motor[2], 6, MIT_MODE);//发送id为6
-    joint_motor_init(&chassis -> joint_motor[3], 8, MIT_MODE);//发送id为8
+    chassis_move.leg_set = LEGLEN_MIN;
+    joint_motor_init(&chassis -> joint_motor[2], 7, MIT_MODE);//发送id为7
+    joint_motor_init(&chassis -> joint_motor[3], 5, MIT_MODE);//发送id为5
 
     VMC_init(vmc);//给杆长赋值
 
     PID_init(legl, PID_POSITION, legl_pid, LEG_PID_MAX_OUT, LEG_PID_MAX_IOUT);//腿长pid
 
-    for (int j = 0; j < 10; j++) {
-        enable_motor_mode(&hfdcan2, chassis -> joint_motor[3] . para . id, chassis -> joint_motor[3] . mode);
+    for (int j = 0; j < 20; j++) {
+        enable_motor_mode(&hfdcan1, chassis -> joint_motor[2] . para . id, chassis -> joint_motor[3] . mode);
         osDelay(1);
     }
-    for (int j = 0; j < 10; j++) {
-        enable_motor_mode(&hfdcan2, chassis -> joint_motor[2] . para . id, chassis -> joint_motor[2] . mode);
+    for (int j = 0; j < 20; j++) {
+        enable_motor_mode(&hfdcan1, chassis -> joint_motor[3] . para . id, chassis -> joint_motor[2] . mode);
         osDelay(1);
     }
 //    for (int j = 0; j < 10; j++) {
@@ -117,46 +113,51 @@ extern float jump_time;
 
 void chassisL_control_loop(chassis_t *chassis, vmc_leg_t *vmcl, INS_t *ins, float *LQR_K, PidTypeDef *leg)
 {
+    static float data_err[6]={0};
     VMC_calc_1_left(vmcl, ins,
                     ((float) CHASSL_TIME) * 3.0f / 1000.0f);//计算theta和d_theta给lqr用，同时也计算左腿长L0,该任务控制周期是3*0.001秒
 
     for (int i = 0; i < 12; i++) {
-        LQR_K[i] = LQR_K_calc(&Poly_Coefficient[i][0], vmcl -> L0);
+//        LQR_K[i] = LQR_K_calc(&Poly_Coefficient[i][0], vmcl -> L0);
+        LQR_K[i] = LQR_K_L[i];
     }
 
+    data_err[0] = 0.0f
+//                    - vmcl -> theta
+		;
+    data_err[1] = 0.0f
+//                    - vmcl -> d_theta
+		;
+    data_err[2] = 0.0f
+           - chassis -> x_set - chassis -> x_filter
+		;
+    data_err[3] = 0.0f
+            -chassis -> v_set +chassis -> v_filter
+		;
+    data_err[4] = 0.0f
+//            - chassis -> myPithL
+            ;
+    data_err[5] = 0.0f
+//            - chassis -> myPithGyroL
+            ;
 
-    chassis -> wheel_motor[1] . wheel_T = (
-            LQR_K[0] * (vmcl -> theta - 0.0f)
-            + LQR_K[1] * (vmcl -> d_theta - 0.0f)
-//                                           + LQR_K[2] * (chassis -> x_filter - 0.0f)
-//                                           + LQR_K[3] * (chassis -> v_filter - 0.0f)
-//                                           - LQR_K[4] * (chassis -> myPithR - 0.0f)
-//                                           - LQR_K[5] * (chassis -> myPithGyroR - 0.0f)
-                                           )/5.0f;
-    //髋关节输出力矩
-    vmcl -> Tp = (0.0f
-//            LQR_K[6] * (vmcl -> theta - 0.0f)
-//                  + LQR_K[7] * (vmcl -> d_theta - 0.0f)
-//                  + LQR_K[8] * (chassis -> x_filter - 0.0f)
-//                  + LQR_K[9] * (chassis -> v_filter - 0.0f)
-//                  + LQR_K[10] * (chassis -> myPithL - 0.0f)
-//                  + LQR_K[11] * (chassis -> myPithGyroL - 0.0f)
-                  );
-    //轮毂电机输出力矩
-//    chassis -> wheel_motor[1] . wheel_T = (LQR_K[0] * (vmcl -> theta - 0.0f)
-//                                           + LQR_K[1] * (vmcl -> d_theta - 0.0f)
-//                                           + LQR_K[2] * (chassis -> x_set - chassis -> x_filter)
-//                                           + LQR_K[3] * (chassis -> v_set - chassis -> v_filter)
-//                                           + LQR_K[4] * (chassis -> myPithL - INIT_PITH)
-//                                           + LQR_K[5] * (chassis -> myPithGyroL - 0.0f));
-//
-//    //右边髋关节输出力矩
-//    vmcl -> Tp = (LQR_K[6] * (vmcl -> theta - 0.0f + chassis -> theta_set)
-//                  + LQR_K[7] * (vmcl -> d_theta - 0.0f)
-//                  + LQR_K[8] * (chassis -> x_set - chassis -> x_filter)
-//                  + LQR_K[9] * (chassis -> v_set - chassis -> v_filter)
-//                  + LQR_K[10] * (chassis -> myPithL - INIT_PITH)
-//                  + LQR_K[11] * (chassis -> myPithGyroL - 0.0f));
+    chassis -> wheel_motor[1] . wheel_T = (LQR_K[0] * data_err[0]
+                                           + LQR_K[1] * data_err[1]
+                                           + LQR_K[2] * data_err[2]
+                                           + LQR_K[3] * data_err[3]
+                                           + LQR_K[4] * data_err[4]
+                                           + LQR_K[5] * data_err[5]);
+    chassis -> wheel_motor[1] . wheel_T *= 1.0f;
+
+
+    //右边髋关节输出力矩
+    vmcl -> Tp = (LQR_K[6] * data_err[0]
+                  + LQR_K[7] * data_err[1]
+                  + LQR_K[8] * data_err[2]
+                  + LQR_K[9] *  data_err[3]
+                  + LQR_K[10] * data_err[4]
+                  + LQR_K[11] * data_err[5]);
+    vmcl -> Tp *=-1.0f;
 
 //    vmcl -> Tp = vmcl -> Tp + chassis -> anti_split_tp;//髋关节输出力矩
 //
@@ -219,39 +220,43 @@ void chassisL_control_loop(chassis_t *chassis, vmc_leg_t *vmcl, INS_t *ins, floa
 //    }
 //    else
 //    {
-    vmcl -> F0 = MG / arm_cos_f32(vmcl -> theta) + PID_Calc(leg, vmcl -> L0, chassis -> leg_set);//前馈+pd
+    vmcl -> F0 =
+            MG / arm_cos_f32(vmcl -> theta)
+            + PID_Calc(leg, vmcl -> L0, chassis -> leg_set)
+            ;//前馈+pd
+
 //    }
 
 //    left_off_ground_flag = ground_detectionL(vmcl, ins);//离地检测
     left_off_ground_flag =0;
-    if (chassis -> recover_flag == 0) {//倒地自起不需要检测是否离地
-        if ((right_off_ground_flag == 1 && left_off_ground_flag == 1 && vmcl -> leg_flag == 0 &&
-             chassis -> jump_flag2 != 1 &&
-             chassis -> jump_flag != 1 && chassis -> jump_flag2 != 2 && chassis -> jump_flag != 2)
-            || chassis -> jump_flag2 == 3) {//当两腿同时离地并且遥控器没有在控制腿的伸缩时，才认为离地
-            //排除跳跃的压缩阶段和跳跃的缩腿阶段
-            chassis -> wheel_motor[1] . wheel_T = 0.0f;
-            vmcl -> Tp = LQR_K[6] * (vmcl -> theta - 0.0f) + LQR_K[7] * (vmcl -> d_theta - 0.0f);
-
-            chassis -> x_filter = 0.0f;
-            chassis -> x_set = chassis -> x_filter;
-
-            vmcl -> Tp = vmcl -> Tp + chassis -> anti_split_tp;
-        } else {//没有离地
+//    if (chassis -> recover_flag == 0) {//倒地自起不需要检测是否离地
+//        if ((right_off_ground_flag == 1 && left_off_ground_flag == 1 && vmcl -> leg_flag == 0 &&
+//             chassis -> jump_flag2 != 1 &&
+//             chassis -> jump_flag != 1 && chassis -> jump_flag2 != 2 && chassis -> jump_flag != 2)
+//            || chassis -> jump_flag2 == 3) {//当两腿同时离地并且遥控器没有在控制腿的伸缩时，才认为离地
+//            //排除跳跃的压缩阶段和跳跃的缩腿阶段
+//            chassis -> wheel_motor[1] . wheel_T = 0.0f;
+//            vmcl -> Tp = LQR_K[6] * (vmcl -> theta - 0.0f) + LQR_K[7] * (vmcl -> d_theta - 0.0f);
+//
+//            chassis -> x_filter = 0.0f;
+//            chassis -> x_set = chassis -> x_filter;
+//
+//            vmcl -> Tp = vmcl -> Tp + chassis -> anti_split_tp;
+//        } else {//没有离地
             vmcl -> leg_flag = 0;//置为0
 
-            if (chassis -> jump_flag2 == 0) {//不跳跃的时候需要roll轴补偿
+//            if (chassis -> jump_flag2 == 0) {//不跳跃的时候需要roll轴补偿
 
-                vmcl -> F0 = vmcl -> F0 - chassis -> roll_f0;//roll轴补偿取反然后加上去
+//                vmcl -> F0 = vmcl -> F0 - chassis -> roll_f0;//roll轴补偿取反然后加上去
 
-            }
-        }
-    } else if (chassis -> recover_flag == 1) {
-        vmcl -> Tp = 0.0f;
-        vmcl -> F0 = 0.0f;
-    }
+//            }
+//        }
+//    } else if (chassis -> recover_flag == 1) {
+//        vmcl -> Tp = 0.0f;
+//        vmcl -> F0 = 0.0f;
+//    }
 
-    mySaturate(&vmcl -> F0, -150.0f, 150.0f);//限幅
+    mySaturate(&vmcl -> F0, -MAX_F0, MAX_F0);//限幅
 
     VMC_calc_2(vmcl);//计算期望的关节输出力矩
 

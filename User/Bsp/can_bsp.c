@@ -41,37 +41,37 @@ void FDCAN1_Config(void)
     }
 }
 
-void FDCAN2_Config(void)
-{
-    FDCAN_FilterTypeDef sFilterConfig;
-    /* Configure Rx filter */
-    sFilterConfig . IdType = FDCAN_STANDARD_ID;
-    sFilterConfig . FilterIndex = 1;
-    sFilterConfig . FilterType = FDCAN_FILTER_MASK;
-    sFilterConfig . FilterConfig = FDCAN_FILTER_TO_RXFIFO1;
-    sFilterConfig . FilterID1 = 0x00000000;
-    sFilterConfig . FilterID2 = 0x00000000;
-    if (HAL_FDCAN_ConfigFilter(&hfdcan2, &sFilterConfig) != HAL_OK) {
-        Error_Handler();
-    }
-
-    /* Configure global filter:
-       Filter all remote frames with STD and EXT ID
-       Reject non matching frames with STD ID and EXT ID */
-    if (HAL_FDCAN_ConfigGlobalFilter(&hfdcan2, FDCAN_REJECT, FDCAN_REJECT, FDCAN_FILTER_REMOTE, FDCAN_FILTER_REMOTE) !=
-        HAL_OK) {
-        Error_Handler();
-    }
-
-    /* Activate Rx FIFO 0 new message notification on both FDCAN instances */
-    if (HAL_FDCAN_ActivateNotification(&hfdcan2, FDCAN_IT_RX_FIFO1_NEW_MESSAGE, 0) != HAL_OK) {
-        Error_Handler();
-    }
-
-    if (HAL_FDCAN_Start(&hfdcan2) != HAL_OK) {
-        Error_Handler();
-    }
-}
+//void FDCAN2_Config(void)
+//{
+//    FDCAN_FilterTypeDef sFilterConfig;
+//    /* Configure Rx filter */
+//    sFilterConfig . IdType = FDCAN_STANDARD_ID;
+//    sFilterConfig . FilterIndex = 1;
+//    sFilterConfig . FilterType = FDCAN_FILTER_MASK;
+//    sFilterConfig . FilterConfig = FDCAN_FILTER_TO_RXFIFO1;
+//    sFilterConfig . FilterID1 = 0x00000000;
+//    sFilterConfig . FilterID2 = 0x00000000;
+//    if (HAL_FDCAN_ConfigFilter(&hfdcan2, &sFilterConfig) != HAL_OK) {
+//        Error_Handler();
+//    }
+//
+//    /* Configure global filter:
+//       Filter all remote frames with STD and EXT ID
+//       Reject non matching frames with STD ID and EXT ID */
+//    if (HAL_FDCAN_ConfigGlobalFilter(&hfdcan2, FDCAN_REJECT, FDCAN_REJECT, FDCAN_FILTER_REMOTE, FDCAN_FILTER_REMOTE) !=
+//        HAL_OK) {
+//        Error_Handler();
+//    }
+//
+//    /* Activate Rx FIFO 0 new message notification on both FDCAN instances */
+//    if (HAL_FDCAN_ActivateNotification(&hfdcan2, FDCAN_IT_RX_FIFO1_NEW_MESSAGE, 0) != HAL_OK) {
+//        Error_Handler();
+//    }
+//
+//    if (HAL_FDCAN_Start(&hfdcan2) != HAL_OK) {
+//        Error_Handler();
+//    }
+//}
 
 void FDCAN3_Config(void)
 {
@@ -223,24 +223,12 @@ void HAL_FDCAN_RxFifo1Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo1ITs)
                     break;
                 case 4 :dm4310_fbdata(&chassis_move . joint_motor[1], g_Can2RxData, RxHeader2 . DataLength);
                     break;
+                case 1:dm4310_fbdata(&chassis_move . joint_motor[3], g_Can2RxData, RxHeader2 . DataLength);
+                    break;
+                case 2:dm4310_fbdata(&chassis_move . joint_motor[2], g_Can2RxData, RxHeader2 . DataLength);
+                    break;
 //                case 0 :
 //                    dm6215_fbdata(&chassis_move . wheel_motor[0], g_Can1RxData, RxHeader1 . DataLength);
-//                    break;
-                default: break;
-            }
-        } else if (hfdcan -> Instance == FDCAN2) {
-            FDCAN_RxHeaderTypeDef RxHeader3;
-            uint8_t g_Can3RxData[64];
-            memset(g_Can3RxData, 0, sizeof(g_Can3RxData));
-            HAL_FDCAN_GetRxMessage(hfdcan, FDCAN_RX_FIFO1, &RxHeader3, g_Can3RxData);
-
-            switch (RxHeader3 . Identifier) {
-                case 3 :dm4310_fbdata(&chassis_move . joint_motor[2], g_Can3RxData, RxHeader3 . DataLength);
-                    break;
-                case 4 :dm4310_fbdata(&chassis_move . joint_motor[3], g_Can3RxData, RxHeader3 . DataLength);
-                    break;
-//                case 0 :
-//                    dm6215_fbdata(&chassis_move . wheel_motor[1], g_Can2RxData, RxHeader2 . DataLength);
 //                    break;
                 default: break;
             }

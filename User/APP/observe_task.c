@@ -38,11 +38,8 @@ float vaEstimateKF_K[4];
 const float vaEstimateKF_H[4] = {1.0f, 0.0f,
                                  0.0f, 1.0f};    // 设置矩阵H为常量
 
-extern INS_t INS;
-extern chassis_t chassis_move;
 
-extern vmc_leg_t right;
-extern vmc_leg_t left;
+
 
 float vel_acc[2];
 uint32_t OBSERVE_TIME = 3;//任务周期是3ms
@@ -56,28 +53,34 @@ void Observe_task(void)
     static float wr, wl = 0.0f;
     static float vrb, vlb = 0.0f;
     static float aver_v = 0.0f;
+    static float gyro_filter = 0.0f;
 
     xvEstimateKF_Init(&vaEstimateKF);
 
     while (1) {
-        wr = -chassis_move . wheel_motor[0] . para . vel / REDUCTION_RATIO - INS . Gyro[1] +
+//        gyro_filter = fabs(INS . Gyro[1] )<0.02f ? 0.0f:INS . Gyro[1];
+        gyro_filter = INS . Gyro[1];
+        wl = -chassis_move . wheel_motor[1] . para . vel / REDUCTION_RATIO + gyro_filter +
+             left . d_alpha;//左边驱动轮转子相对大地角速度，这里定义的是顺时针为正
+        vlb = wl *  (WHEEL_RADIUS/2.0f) + left . L0 * left . d_theta * arm_cos_f32(left . theta) +
+              left . d_L0 * arm_sin_f32(left . theta);//机体b系的速度
+        wr = -chassis_move . wheel_motor[0] . para . vel / REDUCTION_RATIO - gyro_filter +
              right . d_alpha;//右边驱动轮转子相对大地角速度，这里定义的是顺时针为正,REDUCTION_RATIO为减速比
-        vrb = wr * WHEEL_RADIUS + right . L0 * right . d_theta * arm_cos_f32(right . theta) +
+        vrb = wr *  (WHEEL_RADIUS/2.0f) + right . L0 * right . d_theta * arm_cos_f32(right . theta) +
               right . d_L0 * arm_sin_f32(right . theta);//机体b系的速度，WHEEL_RADIUS为轮子半径
 
-        wl = -chassis_move . wheel_motor[1] . para . vel / REDUCTION_RATIO + INS . Gyro[1] +
-             left . d_alpha;//左边驱动轮转子相对大地角速度，这里定义的是顺时针为正
-        vlb = wl * WHEEL_RADIUS + left . L0 * left . d_theta * arm_cos_f32(left . theta) +
-              left . d_L0 * arm_sin_f32(left . theta);//机体b系的速度
+
 
         aver_v = (vrb - vlb) / 2.0f;//取平均
         xvEstimateKF_Update(&vaEstimateKF, -INS . MotionAccel_b[0], aver_v);
 
         //原地自转的过程中v_filter和x_filter应该都是为0
         chassis_move . v_filter = vel_acc[0];//得到卡尔曼滤波后的速度
-        chassis_move . x_filter = chassis_move . x_filter + chassis_move . v_filter * ((float) OBSERVE_TIME / 1000.0f);
+        chassis_move . x_filter += chassis_move . v_filter * ((float) OBSERVE_TIME / 1000.0f);
 
         //如果想直接用轮子速度，不做融合的话可以这样
+//        chassis_move.v_filter= chassis_move . wheel_motor[0] . para . vel / REDUCTION_RATIO * (WHEEL_RADIUS/2.0f);
+//        chassis_move.x_filter=
 //	chassis_move.v_filter=(chassis_move.wheel_motor[0].para.vel-chassis_move.wheel_motor[1].para.vel)*(-0.0603f)/2.0f;//0.0603是轮子半径，电机反馈的是角速度，乘半径后得到线速度，数学模型中定义的是轮子顺时针为正，所以要乘个负号
 //	chassis_move.x_filter=chassis_move.x_filter+chassis_move.v_filter*((float)OBSERVE_TIME/1000.0f);
 

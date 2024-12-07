@@ -2,7 +2,7 @@
 #define __CONFIG_H__
 
 #define LEGLEN_MIN (0.25f)  //原始腿长
-#define LEGLEN_MAX (0.4f)  //最大腿长
+#define LEGLEN_MAX (0.25f)  //最大腿长
 #define INIT_LEGLEN (0.25f)  //初始腿长
 
 #define INIT_PITH (0.00f)  //初始俯仰角
@@ -12,12 +12,39 @@
 //#define MG (79.5f)
 #define MG (10.0f)
 #define REDUCTION_RATIO (268.0f / 17.0f) //减速比
-#define WHEEL_RADIUS (0.129f) //轮子半径
+#define WHEEL_RADIUS (0.129f) //轮子直径
 
 #define DJI3508_TOQUE_CONSTANT  (0.3f)//电机转矩常数
-#define DJI3508_TOQUE_MAX  (2.0f)//电机最大转矩//3.0f *268.0f/17.0f/3591.0f*187.0f    2.46f
+#define DJI3508_TOQUE_MAX  (4.0f)//电机最大转矩//3.0f *268.0f/17.0f/3591.0f*187.0f    2.46f
 
-#define DM4310_TOQUE_MAX (3.0f)
+#define DM4310_TOQUE_MAX (2.6f)
+
+#define MAX_F0 (100.0f)
+
+#define LEG_PID_KP  40.0f
+#define LEG_PID_KI  0.0f//不积分
+#define LEG_PID_KD  20.0f
+#define LEG_PID_MAX_OUT  50.0f //90牛
+#define LEG_PID_MAX_IOUT 0.0f
+
+#define ROLL_PID_KP 140.0f
+#define ROLL_PID_KI 0.0f
+#define ROLL_PID_KD 10.0f
+#define ROLL_PID_MAX_OUT  100.0f
+#define ROLL_PID_MAX_IOUT 0.0f
+
+#define TP_PID_KP 30.0f
+#define TP_PID_KI 0.0f
+#define TP_PID_KD 1.0f
+#define TP_PID_MAX_OUT  3.0f
+#define TP_PID_MAX_IOUT 0.0f
+
+#define TURN_PID_KP 2.5f
+#define TURN_PID_KI 0.0f
+#define TURN_PID_KD 0.3f
+#define TURN_PID_MAX_OUT  1.0f
+#define TURN_PID_MAX_IOUT 0.0f
+
 
 
 #define SENSE_VX  (-0.004f)

@@ -7,23 +7,7 @@
 #include "VMC_calc.h"
 #include "INS_task.h"
 
-#define ROLL_PID_KP 140.0f
-#define ROLL_PID_KI 0.0f
-#define ROLL_PID_KD 10.0f
-#define ROLL_PID_MAX_OUT  100.0f
-#define ROLL_PID_MAX_IOUT 0.0f
 
-#define TP_PID_KP 30.0f
-#define TP_PID_KI 0.0f
-#define TP_PID_KD 1.0f
-#define TP_PID_MAX_OUT  3.0f
-#define TP_PID_MAX_IOUT 0.0f
-
-#define TURN_PID_KP 2.5f
-#define TURN_PID_KI 0.0f
-#define TURN_PID_KD 0.3f
-#define TURN_PID_MAX_OUT  1.0f//轮毂电机的额定扭矩
-#define TURN_PID_MAX_IOUT 0.0f
 
 
 
@@ -71,6 +55,9 @@ typedef struct
 
 } chassis_t;
 
+extern chassis_t chassis_move;
+extern vmc_leg_t right;
+extern vmc_leg_t left;
 
 extern void ChassisR_init(chassis_t *chassis, vmc_leg_t *vmc, PidTypeDef *legr);
 
