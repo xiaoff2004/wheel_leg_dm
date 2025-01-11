@@ -29,7 +29,7 @@
 vmc_leg_t left;
 
 float LQR_K_L[12] =
-{-6.2267f, -0.5523f, -0.0196f, -0.1568f, 1.5238f, 0.2556f, 2.6314f, -0.1499f, -0.0066f, -0.0540f, 6.2181f, 0.4812f}
+{-6.1673f, -0.5795f, -0.0239f, -0.2290f, 1.9161f, 0.2949f, 2.9455f, -0.1278f, -0.0054f, -0.0527f, 6.1990f, 0.4508f}
 ;
 extern float Poly_Coefficient[12][4];
 
@@ -123,22 +123,22 @@ void chassisL_control_loop(chassis_t *chassis, vmc_leg_t *vmcl, INS_t *ins, floa
     }
 
     data_err[0] = 0.0f
-//                    - vmcl -> theta
+                    - vmcl -> theta
 		;
     data_err[1] = 0.0f
-//                    - vmcl -> d_theta
+                    - vmcl -> d_theta
 		;
     data_err[2] = 0.0f
-           - chassis -> x_set - chassis -> x_filter
+//           - chassis -> x_set + chassis -> x_filter
 		;
     data_err[3] = 0.0f
             -chassis -> v_set +chassis -> v_filter
 		;
     data_err[4] = 0.0f
-//            - chassis -> myPithL
+            - chassis -> myPithL
             ;
     data_err[5] = 0.0f
-//            - chassis -> myPithGyroL
+            - chassis -> myPithGyroL
             ;
 
     chassis -> wheel_motor[1] . wheel_T = (LQR_K[0] * data_err[0]
@@ -157,7 +157,8 @@ void chassisL_control_loop(chassis_t *chassis, vmc_leg_t *vmcl, INS_t *ins, floa
                   + LQR_K[9] *  data_err[3]
                   + LQR_K[10] * data_err[4]
                   + LQR_K[11] * data_err[5]);
-    vmcl -> Tp *=-1.0f;
+//    vmcl -> Tp *=-1.0f;
+    vmcl -> Tp *=0.0f;
 
 //    vmcl -> Tp = vmcl -> Tp + chassis -> anti_split_tp;//髋关节输出力矩
 //

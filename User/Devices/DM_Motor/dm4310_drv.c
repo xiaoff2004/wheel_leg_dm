@@ -317,7 +317,7 @@ void dji3508_ctrl(hcan_t *hcan, float torq1, float torq2)
     int16_t i =0;
     if(torq1 !=0.0f)
     {
-       i = (torq1  + 0.26f * (torq1 > 0 ? 1.0f :-1.0f))/0.269f;
+       i = (torq1  + 0.272f * (torq1 > 0 ? 1.0f :-1.0f))/0.11f;
        i = i *16384.0f/20.0f;
     }
     data[0] = ((int16_t)i >> 8);
@@ -326,7 +326,7 @@ void dji3508_ctrl(hcan_t *hcan, float torq1, float torq2)
 
     if(torq2 != 0.0f )
     {
-        i = (torq2  + 0.269f * (torq2 > 0 ? 1.0f :-1.0f)) /0.269f;
+        i = (torq2  + 0.269f * (torq2 > 0 ? 1.0f :-1.0f)) /0.11f;
         i = i *16384.0f/20.0f;
     }
     data[2] = ((int16_t)i >> 8);

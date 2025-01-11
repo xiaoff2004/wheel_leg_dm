@@ -24,7 +24,7 @@
 
 
 float LQR_K_R[12] =
-{-6.2267f, -0.5523f, -0.0196f, -0.1568f, 1.5238f, 0.2556f, 2.6314f, -0.1499f, -0.0066f, -0.0540f, 6.2181f, 0.4812f}
+{-6.1673f, -0.5795f, -0.0239f, -0.2290f, 1.9161f, 0.2949f, 2.9455f, -0.1278f, -0.0054f, -0.0527f, 6.1990f, 0.4508f}
 ;
 
 //三次多项式拟合系数
@@ -176,22 +176,22 @@ void chassisR_control_loop(chassis_t *chassis, vmc_leg_t *vmcr, INS_t *ins, floa
 
 
     data_err[0] = 0.0f
-//                    - vmcr -> theta
+                    - vmcr -> theta
 		;
     data_err[1] = 0.0f
-//                    - vmcr -> d_theta
+                    - vmcr -> d_theta
 		;
     data_err[2] = 0.0f
-            -chassis -> x_set + chassis -> x_filter
+//            +chassis -> x_set - chassis -> x_filter
 ;
     data_err[3] = 0.0f
-           -chassis -> v_set + chassis -> v_filter
+           +chassis -> v_set - chassis -> v_filter
 ;
     data_err[4] = 0.0f
-//            - chassis -> myPithR
+            - chassis -> myPithR
             ;
     data_err[5] = 0.0f
-//            - chassis -> myPithGyroR
+            - chassis -> myPithGyroR
             ;
 
     chassis -> wheel_motor[0] . wheel_T = (LQR_K[0] * data_err[0]
@@ -212,7 +212,9 @@ void chassisR_control_loop(chassis_t *chassis, vmc_leg_t *vmcr, INS_t *ins, floa
                   + LQR_K[10] * data_err[4]
                   + LQR_K[11] * data_err[5]);
 
-    vmcr -> Tp *= -1.0f;
+//    vmcr -> Tp *= -1.0f;
+vmcr -> Tp *= 0.0f;
+
 
 //    vmcr -> Tp = vmcr -> Tp + chassis -> anti_split_tp;
 
