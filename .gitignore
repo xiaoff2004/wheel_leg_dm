@@ -1,6 +1,5 @@
 /cmake-build-debug
-/MDK-ARM
+/MDK-ARM/.idea
+/MDK-ARM/CtrlBoard-H7_IMU
 /.idea
-/Middlewares
-/Drivers
 /.history

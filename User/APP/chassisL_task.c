@@ -56,9 +56,9 @@ void ChassisL_task(void)
 
 
         if (chassis_move . start_flag == 1) {
-            mit_ctrl(&hfdcan1, 0x05, 0.0f, 0.0f, 0.0f, 0.0f, left . torque_set[1]);//left.torque_set[1]
-            osDelay(CHASSL_TIME);
-            mit_ctrl(&hfdcan1, 0x07, 0.0f, 0.0f, 0.0f, 0.0f, left . torque_set[0]);
+//            mit_ctrl(&hfdcan1, 0x05, 0.0f, 0.0f, 0.0f, 0.0f, left . torque_set[1]);//left.torque_set[1]
+//            osDelay(CHASSL_TIME);
+//            mit_ctrl(&hfdcan1, 0x07, 0.0f, 0.0f, 0.0f, 0.0f, left . torque_set[0]);
             osDelay(CHASSL_TIME);
 
 

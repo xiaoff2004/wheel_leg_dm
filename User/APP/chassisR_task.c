@@ -74,11 +74,11 @@ void ChassisR_task(void)
         chassisR_control_loop(&chassis_move, &right, &INS, LQR_K_R, &LegR_Pid);//控制计算
 
         if (chassis_move . start_flag == 1) {
-            mit_ctrl(&hfdcan1, 0x08, 0.0f, 0.0f, 0.0f, 0.0f, right . torque_set[1]);//right.torque_set[1]
-            osDelay(CHASSR_TIME);
-            mit_ctrl(&hfdcan1, 0x06, 0.0f, 0.0f, 0.0f, 0.0f, right . torque_set[0]);//right.torque_set[0]
-            osDelay(CHASSR_TIME);
-            dji3508_ctrl(&hfdcan3, chassis_move . wheel_motor[0] . wheel_T, chassis_move . wheel_motor[1] . wheel_T);
+//            mit_ctrl(&hfdcan1, 0x08, 0.0f, 0.0f, 0.0f, 0.0f, right . torque_set[1]);//right.torque_set[1]
+//            osDelay(CHASSR_TIME);
+//            mit_ctrl(&hfdcan1, 0x06, 0.0f, 0.0f, 0.0f, 0.0f, right . torque_set[0]);//right.torque_set[0]
+//            osDelay(CHASSR_TIME);
+//            dji3508_ctrl(&hfdcan3, chassis_move . wheel_motor[0] . wheel_T, chassis_move . wheel_motor[1] . wheel_T);
             osDelay(CHASSR_TIME);
         } else if (chassis_move . start_flag == 0) {
             mit_ctrl(&hfdcan1, 0x08, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);//right.torque_set[1]
