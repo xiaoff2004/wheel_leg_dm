@@ -17,7 +17,7 @@
 #include "kalman_filter.h"
 #include "cmsis_os.h"
 #include "config.h"
-
+#include "dt7_task.h"
 
 KalmanFilter_t vaEstimateKF;       // 卡尔曼滤波器结构体
 
@@ -45,6 +45,7 @@ float vel_acc[2];
 uint32_t OBSERVE_TIME = 3;//任务周期是3ms
 
 
+
 void Observe_task(void)
 {
     while (INS . ins_flag == 0) {//等待加速度收敛
@@ -68,8 +69,6 @@ void Observe_task(void)
              right . d_alpha;//右边驱动轮转子相对大地角速度，这里定义的是顺时针为正,REDUCTION_RATIO为减速比
         vrb = wr *  (WHEEL_RADIUS/2.0f) + right . L0 * right . d_theta * arm_cos_f32(right . theta) +
               right . d_L0 * arm_sin_f32(right . theta);//机体b系的速度，WHEEL_RADIUS为轮子半径
-
-
 
         aver_v = (vrb - vlb) / 2.0f;//取平均
         xvEstimateKF_Update(&vaEstimateKF, -INS . MotionAccel_b[0], aver_v);

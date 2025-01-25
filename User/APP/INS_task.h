@@ -74,6 +74,7 @@ typedef struct
 
 extern INS_t INS;
 
+
 extern void INS_Init(void);
 extern void INS_task(void);
 

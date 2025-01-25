@@ -30,10 +30,12 @@ float ins_dt = 0.0f;
 float ins_time;
 int stop_time;
 
+
+
 void INS_Init(void)
 {
-	mahony_init(&mahony, 1.0f, 0.0f, 0.001f);
-	INS.AccelLPF = 0.0089f;
+	mahony_init(&mahony, 1.0f, 0, 0.001f);
+	INS.AccelLPF = 0.0067f;
 }
 
 void INS_task(void)

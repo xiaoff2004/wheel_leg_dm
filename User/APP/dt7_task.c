@@ -19,6 +19,7 @@
 #include "remote.h"
 #include "config.h"
 #include "vofa.h"
+#include "observe_task.h"
 
 
 
@@ -27,22 +28,38 @@ uint32_t DT7_TIME = 10; // ps2手柄任务周期是10ms
 
 uint8_t last_flag = 0;
 uint8_t flag = 0;
+
+float data_view[10] = {0.0f};
+
 void dt7_task(void)
 {
     RemoteInit();
-
+    chassis_move.leg_set = INIT_LEGLEN;
+		chassis_move.start_flag = 0;
+    chassis_move.recover_flag = 0;
     while (1)
     {                                           // 读数据
         dt7_data_process(&RC_Ctl, &chassis_move, (float)DT7_TIME / 1000.0f); // 处理数据，设置期望数据
-        vofa_demo(
-                left.L0,
-                  right.L0,
-                  0,
-                  left.F0,
-                  right.F0,
-                   0,
-                  0,
-                  0);
+//        vofa_demo(
+//                data_view[0],
+//                data_view[1],
+//                data_view[2],
+//                data_view[3],
+//                data_view[4],
+//                data_view[5],
+//                data_view[6],
+//                0
+//			);
+ vofa_demo(
+                left . torque_set[0],
+                left . torque_set[1],
+                right.torque_set[0],
+                right.torque_set[1],
+                chassis_move . wheel_motor[0] . wheel_T,
+                chassis_move . wheel_motor[1] . wheel_T,
+                0,
+                0
+			);
         osDelay(DT7_TIME);
     }
 }

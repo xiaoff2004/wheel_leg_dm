@@ -5,7 +5,7 @@
 #include "chassisR_task.h"
 #include "ins_task.h"
 #include "remote.h"
-
+extern float data_view[10];
 extern void dt7_task(void);
 extern void dt7_data_process(RC_Ctl_t *RC_Ctl, chassis_t *chassis, float dt);
 

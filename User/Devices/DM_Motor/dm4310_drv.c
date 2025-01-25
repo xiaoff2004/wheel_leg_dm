@@ -95,7 +95,8 @@ void dji3508_fbdata(Wheel_Motor_t *motor, uint8_t *rx_data, uint32_t data_len)
 {
     if (data_len == FDCAN_DLC_BYTES_8) {//返回的数据有8个字节
         motor -> para . pos = (uint16_t)(rx_data[0] << 8) + rx_data[1];
-        motor -> para . vel = (int16_t)(rx_data[2] << 8) + rx_data[3];
+        motor -> para . vel = (int16_t)(rx_data[2] << 8) + rx_data[3];//rpm
+        motor -> para . vel /=60;//rps
         motor -> para . tor = (int16_t)(rx_data[4] << 8) + rx_data[5];
         motor -> para . Tmos = (uint8_t) rx_data[6];
 
@@ -317,7 +318,8 @@ void dji3508_ctrl(hcan_t *hcan, float torq1, float torq2)
     int16_t i =0;
     if(torq1 !=0.0f)
     {
-       i = (torq1  + 0.272f * (torq1 > 0 ? 1.0f :-1.0f))/0.11f;
+//       i = (torq1  + 0.2f * (torq1 > 0 ? 1.0f :-1.0f))/0.26f;
+        i = torq1  /0.24f;
        i = i *16384.0f/20.0f;
     }
     data[0] = ((int16_t)i >> 8);
@@ -326,7 +328,8 @@ void dji3508_ctrl(hcan_t *hcan, float torq1, float torq2)
 
     if(torq2 != 0.0f )
     {
-        i = (torq2  + 0.269f * (torq2 > 0 ? 1.0f :-1.0f)) /0.11f;
+//        i = (torq2  + 0.2f * (torq2 > 0 ? 1.0f :-1.0f)) /0.26f;
+        i = torq2  /0.24f;
         i = i *16384.0f/20.0f;
     }
     data[2] = ((int16_t)i >> 8);
