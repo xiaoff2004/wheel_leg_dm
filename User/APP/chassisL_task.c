@@ -25,11 +25,12 @@
 #include "pid.h"
 #include "config.h"
 #include "remote.h"
+#include "dt7_task.h"
 
 vmc_leg_t left;
 
 float LQR_K_L[12] =
-{-6.1673f, -0.5795f, -0.0239f, -0.2290f, 1.9161f, 0.2949f, 2.9455f, -0.1278f, -0.0054f, -0.0527f, 6.1990f, 0.4508f}
+{-20.9282f, -3.7083f, -4.9246f, -6.5792f, 11.0064f, 1.8198f, 29.6233f, 4.0909f, 2.7354f, 3.7450f, 25.5208f, 0.7842f}
 ;
 extern float Poly_Coefficient[12][4];
 
@@ -82,11 +83,11 @@ void ChassisL_init(chassis_t *chassis, vmc_leg_t *vmc, PidTypeDef *legl)
 
     PID_init(legl, PID_POSITION, legl_pid, LEG_PID_MAX_OUT, LEG_PID_MAX_IOUT);//腿长pid
 
-    for (int j = 0; j < 20; j++) {
+    for (int j = 0; j < 10; j++) {
         enable_motor_mode(&hfdcan1, chassis -> joint_motor[2] . para . id, chassis -> joint_motor[3] . mode);
         osDelay(1);
     }
-    for (int j = 0; j < 20; j++) {
+    for (int j = 0; j < 10; j++) {
         enable_motor_mode(&hfdcan1, chassis -> joint_motor[3] . para . id, chassis -> joint_motor[2] . mode);
         osDelay(1);
     }
@@ -98,8 +99,8 @@ void ChassisL_init(chassis_t *chassis, vmc_leg_t *vmc, PidTypeDef *legl)
 
 void chassisL_feedback_update(chassis_t *chassis, vmc_leg_t *vmc, INS_t *ins)
 {
-    vmc -> phi1 = pi / 2.0f + chassis -> joint_motor[2] . para . pos;
-    vmc -> phi4 = pi / 2.0f + chassis -> joint_motor[3] . para . pos;
+    vmc -> phi1 = pi / 2.0f + chassis -> joint_motor[2] . para . pos + 0.10472f;//因无法准确设置零点，故加上一个偏置
+    vmc -> phi4 = pi / 2.0f + chassis -> joint_motor[3] . para . pos - 0.10472f;
 
     chassis -> myPithL = 0.0f - ins -> Pitch;//估计是左边的pitch角度
     chassis -> myPithGyroL = 0.0f - ins -> Gyro[1];//估计是左边的pitch角速度
@@ -129,7 +130,7 @@ void chassisL_control_loop(chassis_t *chassis, vmc_leg_t *vmcl, INS_t *ins, floa
                     - vmcl -> d_theta
 		;
     data_err[2] = 0.0f
-//           - chassis -> x_set + chassis -> x_filter
+           - chassis -> x_set + chassis -> x_filter
 		;
     data_err[3] = 0.0f
             -chassis -> v_set +chassis -> v_filter
@@ -141,6 +142,7 @@ void chassisL_control_loop(chassis_t *chassis, vmc_leg_t *vmcl, INS_t *ins, floa
             - chassis -> myPithGyroL
             ;
 
+
     chassis -> wheel_motor[1] . wheel_T = (LQR_K[0] * data_err[0]
                                            + LQR_K[1] * data_err[1]
                                            + LQR_K[2] * data_err[2]
@@ -148,6 +150,7 @@ void chassisL_control_loop(chassis_t *chassis, vmc_leg_t *vmcl, INS_t *ins, floa
                                            + LQR_K[4] * data_err[4]
                                            + LQR_K[5] * data_err[5]);
     chassis -> wheel_motor[1] . wheel_T *= 1.0f;
+//    chassis -> wheel_motor[1] . wheel_T *= 0.0f;
 
 
     //右边髋关节输出力矩
@@ -157,8 +160,8 @@ void chassisL_control_loop(chassis_t *chassis, vmc_leg_t *vmcl, INS_t *ins, floa
                   + LQR_K[9] *  data_err[3]
                   + LQR_K[10] * data_err[4]
                   + LQR_K[11] * data_err[5]);
-//    vmcl -> Tp *=-1.0f;
-    vmcl -> Tp *=0.0f;
+    vmcl -> Tp *=-1.0f;
+//    vmcl -> Tp *=0.0f;
 
 //    vmcl -> Tp = vmcl -> Tp + chassis -> anti_split_tp;//髋关节输出力矩
 //

@@ -24,7 +24,7 @@
 
 
 float LQR_K_R[12] =
-{-6.1673f, -0.5795f, -0.0239f, -0.2290f, 1.9161f, 0.2949f, 2.9455f, -0.1278f, -0.0054f, -0.0527f, 6.1990f, 0.4508f}
+{-20.9282f, -3.7083f, -4.9246f, -6.5792f, 11.0064f, 1.8198f, 29.6233f, 4.0909f, 2.7354f, 3.7450f, 25.5208f, 0.7842f}
 ;
 
 //三次多项式拟合系数
@@ -105,11 +105,11 @@ void ChassisR_init(chassis_t *chassis, vmc_leg_t *vmc, PidTypeDef *legr)
 
     PID_init(legr, PID_POSITION, legr_pid, LEG_PID_MAX_OUT, LEG_PID_MAX_IOUT);//腿长pid
 
-    for (int j = 0; j < 20; j++) {
+    for (int j = 0; j < 10; j++) {
         enable_motor_mode(&hfdcan1, chassis -> joint_motor[1] . para . id, chassis -> joint_motor[1] . mode);
         osDelay(1);
     }
-    for (int j = 0; j < 20; j++) {
+    for (int j = 0; j < 10; j++) {
         enable_motor_mode(&hfdcan1, chassis -> joint_motor[0] . para . id, chassis -> joint_motor[0] . mode);
         osDelay(1);
     }
@@ -134,8 +134,8 @@ void Pensation_init(PidTypeDef *roll, PidTypeDef *Tp, PidTypeDef *turn)
 
 void chassisR_feedback_update(chassis_t *chassis, vmc_leg_t *vmc, INS_t *ins)
 {
-    vmc -> phi1 = pi / 2.0f + chassis -> joint_motor[0] . para . pos;
-    vmc -> phi4 = pi / 2.0f + chassis -> joint_motor[1] . para . pos;
+    vmc -> phi1 = pi / 2.0f + chassis -> joint_motor[0] . para . pos + 0.10472f;//因无法准确设置零点，故加上一个偏置
+    vmc -> phi4 = pi / 2.0f + chassis -> joint_motor[1] . para . pos - 0.10472f;
 
     chassis -> myPithR = ins -> Pitch;
     chassis -> myPithGyroR = ins -> Gyro[1];
@@ -175,18 +175,18 @@ void chassisR_control_loop(chassis_t *chassis, vmc_leg_t *vmcr, INS_t *ins, floa
 
 
 
-    data_err[0] = 0.0f
+    data_err[0] = -0.0f
                     - vmcr -> theta
 		;
     data_err[1] = 0.0f
                     - vmcr -> d_theta
 		;
     data_err[2] = 0.0f
-//            +chassis -> x_set - chassis -> x_filter
-;
+            +chassis -> x_set - chassis -> x_filter
+    ;
     data_err[3] = 0.0f
            +chassis -> v_set - chassis -> v_filter
-;
+    ;
     data_err[4] = 0.0f
             - chassis -> myPithR
             ;
@@ -202,6 +202,8 @@ void chassisR_control_loop(chassis_t *chassis, vmc_leg_t *vmcr, INS_t *ins, floa
                                            + LQR_K[5] * data_err[5]);
 
     chassis -> wheel_motor[0] . wheel_T *= 1.0f;
+//    chassis -> wheel_motor[0] . wheel_T *= 0.0f;
+
 
 
     //右边髋关节输出力矩
@@ -212,8 +214,8 @@ void chassisR_control_loop(chassis_t *chassis, vmc_leg_t *vmcr, INS_t *ins, floa
                   + LQR_K[10] * data_err[4]
                   + LQR_K[11] * data_err[5]);
 
-//    vmcr -> Tp *= -1.0f;
-vmcr -> Tp *= 0.0f;
+    vmcr -> Tp *= -1.0f;
+//    vmcr -> Tp *= 0.0f;
 
 
 //    vmcr -> Tp = vmcr -> Tp + chassis -> anti_split_tp;

@@ -3,10 +3,10 @@
 void VMC_init(vmc_leg_t *vmc)//¸ø¸Ë³¤¸³Öµ
 {
     vmc -> l5 = 0.11f;//AE³¤¶È //µ¥Î»Îªm
-    vmc -> l1 = 0.2f;//µ¥Î»Îªm
-    vmc -> l2 = 0.34f;//µ¥Î»Îªm
-    vmc -> l3 = 0.34f;//µ¥Î»Îªm
-    vmc -> l4 = 0.2f;//µ¥Î»Îªm
+    vmc -> l1 = 0.15f;//µ¥Î»Îªm
+    vmc -> l2 = 0.27f;//µ¥Î»Îªm
+    vmc -> l3 = 0.27f;//µ¥Î»Îªm
+    vmc -> l4 = 0.15f;//µ¥Î»Îªm
 }
 
 void VMC_calc_1_right(vmc_leg_t *vmc, INS_t *ins, float dt)//¼ÆËãthetaºÍd_theta¸ølqrÓÃ£¬Í¬Ê±Ò²¼ÆËãÍÈ³¤L0
@@ -16,7 +16,7 @@ void VMC_calc_1_right(vmc_leg_t *vmc, INS_t *ins, float dt)//¼ÆËãthetaºÍd_theta¸
     PitchR = ins -> Pitch;
     PithGyroR = ins -> Gyro[1];
 
-    vmc -> YD = vmc -> l4 * arm_sin_f32(vmc -> phi4);//DµÄy×ø±ê
+    vmc -> YD = vmc -> l4 * arm_sin_f32(vmc -> phi4 );//DµÄy×ø±ê
     vmc -> YB = vmc -> l1 * arm_sin_f32(vmc -> phi1);//BµÄy×ø±ê
     vmc -> XD = vmc -> l5 + vmc -> l4 * arm_cos_f32(vmc -> phi4);//DµÄx×ø±ê
     vmc -> XB = vmc -> l1 * arm_cos_f32(vmc -> phi1); //BµÄx×ø±ê
